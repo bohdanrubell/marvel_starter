@@ -1,5 +1,6 @@
 import React, {useState,useEffect, useRef} from 'react';
 import PropTypes from "prop-types";
+import {TransitionGroup, CSSTransition} from "react-transition-group";
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -56,23 +57,30 @@ const CharList = (props) => {
                 imgStyle = {'objectFit' : 'unset'};
             }
             return (
-                <li
-                    ref={element => refsList.current[i] = element}
-                    className="char__item"
+                    <CSSTransition
                     key={item.id}
-                    onClick={() => {
-                        props.onCharSelected(item.id);
-                        focusMethod(i);
-                    }}>
-                    <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
-                    <div className="char__name">{item.name}</div>
-                </li>
+                    timeout={500}
+                    classNames="char__item">
+                    <li
+                        ref={element => refsList.current[i] = element}
+                        className="char__item"
+                        key={item.id}
+                        onClick={() => {
+                            props.onCharSelected(item.id);
+                            focusMethod(i);
+                        }}>
+                        <img src={item.thumbnail} alt={item.name} style={imgStyle}/>
+                        <div className="char__name">{item.name}</div>
+                    </li>
+                    </CSSTransition>
             )
         });
         // А эта конструкция вынесена для центровки спиннера/ошибки
         return (
             <ul className="char__grid">
-                {items}
+                <TransitionGroup component={null}>
+                    {items}
+                </TransitionGroup>
             </ul>
         )
     }
@@ -80,21 +88,21 @@ const CharList = (props) => {
     const items = renderItems(charList);
 
     const errorMessage = error ? <ErrorMessage/> : null;
-    const spinner =  loading && !newItemLoading ? <Spinner/> : null;
+    const spinner = loading && !newItemLoading ? <Spinner/> : null;
 
     return (
-        <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {items}
-            <button
-                className="button button__main button__long"
-                disabled={newItemLoading}
-                style={{'display': charEnded ? 'none' : 'block'}}
-                onClick={() => onRequest(offset)}>
-                <div className="inner">load more</div>
-            </button>
-        </div>
+            <div className="char__list">
+                {errorMessage}
+                {spinner}
+                {items}
+                <button
+                    className="button button__main button__long"
+                    disabled={newItemLoading}
+                    style={{'display': charEnded ? 'none' : 'block'}}
+                    onClick={() => onRequest(offset)}>
+                    <div className="inner">load more</div>
+                </button>
+            </div>
     )
 }
 
