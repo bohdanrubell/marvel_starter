@@ -5,7 +5,6 @@ import './singleCharPage.scss';
 const SingleCharPage = ({data}) => {
 
     const {name, description, thumbnail} = data;
-    console.log("CHAR!");
     return (
         <div className="single-comic">
             <Helmet>
